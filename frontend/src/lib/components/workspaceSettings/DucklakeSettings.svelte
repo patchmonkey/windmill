@@ -87,8 +87,13 @@
 	type Props = {
 		ducklakeSettings: DucklakeSettingsType
 		ducklakeSavedSettings: DucklakeSettingsType
+		onSave?: () => void
 	}
-	let { ducklakeSettings = $bindable(), ducklakeSavedSettings = $bindable() }: Props = $props()
+	let {
+		ducklakeSettings = $bindable(),
+		ducklakeSavedSettings = $bindable(),
+		onSave: onSaveProp = undefined
+	}: Props = $props()
 
 	let isInstanceCatalogEnabled = $derived($superadmin && !isCloudHosted())
 
@@ -151,6 +156,7 @@
 			})
 			ducklakeSavedSettings = clone(ducklakeSettings)
 			sendUserToast('Ducklake settings saved successfully')
+			onSaveProp?.()
 		} catch (e) {
 			sendUserToast(e, true)
 			console.error('Error saving ducklake settings', e)
@@ -295,7 +301,7 @@
 									bind:this={instanceCatalogPopover}
 								>
 									<svelte:fragment slot="trigger">
-										<Button spacingSize="xs2" variant="border" color="light" btnClasses="h-6">
+										<Button spacingSize="xs2" variant="default" btnClasses="h-6">
 											{#if !status}
 												<span class="text-yellow-600 dark:text-yellow-400">
 													Setup <ArrowRight class="inline" size={14} />
@@ -374,7 +380,7 @@
 		<Row class="!border-0">
 			<Cell colspan={tableHeadNames.length} class="pt-0 pb-2">
 				<div class="flex justify-center">
-					<Button size="sm" btnClasses="max-w-fit" variant="border" on:click={onNewDucklake}>
+					<Button size="sm" btnClasses="max-w-fit" variant="default" on:click={onNewDucklake}>
 						<Plus /> New ducklake
 					</Button>
 				</div>
@@ -465,7 +471,7 @@
 		)}
 	/>
 	{#if showManageCatalogButton}
-		<div class="text-tertiary text-xs mt-6">
+		<div class="text-primary text-xs mt-6">
 			Note: the 'Manage catalog' button below is different from the Manage Ducklake button. This
 			will show you the content of the PostgreSQL database used as a catalog, while the other button
 			shows you the actual content of the ducklake (the parquet files).
